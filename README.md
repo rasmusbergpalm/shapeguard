@@ -7,11 +7,11 @@ The best way I’ve found to avoid bugs is to religiously check the shapes of al
 
 So why not algorithmically check the shapes then? Well it gets ugly fast.
 
-You have to add assert foo.shape == (bs, n_samples, x_size) everywhere, which essentially doubles your linecount and
+You have to add assert `foo.shape == (bs, n_samples, x_size)` everywhere, which essentially doubles your linecount and
 you have to define all your dimensional sizes (bs, etc.), which might vary across train/test, batches, etc.
-So I made a small helper that makes it much nicer. I call it ShapeGuard. When you import it, It adds a method sg to the tensor class, and exposes a static ShapeGuard class.
+So I made a small helper that makes it much nicer. I call it ShapeGuard. When you import it, It adds the `sg` method to the `torch.Tensor` and `torch.distributions.Distribution`, and exposes a static `ShapeGuard` class.
 
-You use the sg method like an assert:
+You use the `sg` method like an assert:
 
 ```python
 def forward(self, x, y):
@@ -27,7 +27,9 @@ z = f(x).sg("bnz")
 
 If the assert fails it produces a nice error message.
 
-It works in the following way: the first time sg is called for an unseen shape, the size of the vector for that shape is saved in the ShapeGuard.shapes global dict. Subsequent calls sees this shape in the shapes dict and asserts that the tensor is the same shape for that dimension. If e.g. your batch size changes between train and test you can call `ShapeGuard.reset("b")` to reset the "b" shape. I've found it works well to reset all shapes at the start of my main `nn.Module.forward` by calling `ShapeGuard.reset()`. If you want to verify an exact dimension you can pass an int as the shape e.g.
+It works in the following way: the first time sg is called for an unseen shape, the size of the tensor for that shape is saved in the `ShapeGuard.shapes` global dict. Subsequent calls sees this shape in the shapes dict and asserts that the tensor is the same shape for that dimension. If e.g. your batch size changes between train and test you can call `ShapeGuard.reset("b")` to reset the "b" shape. 
+
+I've found it works well to reset all shapes at the start of my main `nn.Module.forward` by calling `ShapeGuard.reset()`. If you want to verify an exact dimension you can pass an int as the shape e.g.
 
 ```python
 def forward(self, x, y):
@@ -35,4 +37,4 @@ def forward(self, x, y):
     y.sg("by")
 ```
 
-The special shape '\*' is reserved for shapes that should not be asserted: `x.sg("*chw")` will assert all shapes except the first.
+The special shape '\*' is reserved for shapes that should not be asserted, e.g. `x.sg("*chw")` will assert all shapes except the first.
