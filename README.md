@@ -1,6 +1,8 @@
 # ShapeGuard
 ShapeGuard allows you to very succinctly assert the expected shapes of tensors in a dynamic, einsum inspired way
 
+`pip install torch-shapeguard`
+
 It’s easy to make bugs in ml. One particular rich source of bugs is due to the flexibility of the operators: `a*b` works whether a and b are vectors, scalar vector, vector vector, etc. Similarly `.sum()` will work regardless of the shape of your tensor. Since we're doing optimization whatever computation we end up performing, we can probably optimize it to work reasonably, even if it's not doing what we intended. So our algorithm might "work" even if we have bugs (just less well). This makes bugs super hard to discover.
 
 The best way I’ve found to avoid bugs is to religiously check the shapes of all my tensors, all the time, so I end up spending a lot of time debugging and writing comments like `#(bs, n_samples, z_size)` all over the place.
