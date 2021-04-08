@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name='torch_shapeguard',
-    version='1.0.2',
+    version='1.0.3',
     author="Rasmus Berg Palm",
     author_email="rasmusbergpalm@gmail.com",
     description="ShapeGuard allows you to very succinctly assert the expected shapes of tensors in a dynamic, einsum inspired way.",
